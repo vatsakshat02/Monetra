@@ -1,4 +1,4 @@
-import { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import { Interface } from "readline";
 
 export type userRole =
@@ -70,3 +70,5 @@ const userSchema = new Schema<IUser>({
     default: false
   }
 },{timestamps: true});
+
+export default mongoose.model<IUser>('User',userSchema)
