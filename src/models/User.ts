@@ -14,61 +14,64 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: string;
-  pan: number;
-  dateOfBirth: Date;
-  monthlySalary: number;
-  employmentMode: "salaried" | "self-employed" | "unemployed";
+  pan?: number;
+  dateOfBirth?: Date;
+  monthlySalary?: number;
+  employmentMode?: "salaried" | "self-employed" | "unemployed";
   isProfileComplete: boolean;
   createdAt: Date;
 }
 
-const userSchema = new Schema<IUser>({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
+const userSchema = new Schema<IUser>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: [
+        "borrower",
+        "admin",
+        "sales",
+        "sanction",
+        "disbursement",
+        "collection",
+      ],
+      default: "borrower",
+    },
+    pan: {
+      type: Number,
+      uppercase: true,
+    },
+    dateOfBirth: {
+      type: Date,
+    },
+    monthlySalary: {
+      type: Number,
+    },
+    employmentMode: {
+      type: String,
+      enum: ["salaried", "self-employed", "unemployed"],
+    },
+    isProfileComplete: {
+      type: Boolean,
+      default: false,
+    },
   },
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: [
-      "borrower",
-      "admin",
-      "sales",
-      "sanction",
-      "disbursement",
-      "collection",
-    ],
-    default: "borrower",
-  },
-  pan: {
-    type: Number,
-    uppercase: true,
-  },
-  dateOfBirth: {
-    type: Date,
-  },
-  monthlySalary: {
-    type: Number,
-  },
-  employmentMode: {
-    type: String,
-    enum: ["salaried" ,"self-employed" , "unemployed"];
-  },
-  isProfileComplete: {
-    type:Boolean,
-    default: false
-  }
-},{timestamps: true});
+  { timestamps: true }
+);
 
-export default mongoose.model<IUser>('User',userSchema)
+export default mongoose.model<IUser>("User", userSchema);
