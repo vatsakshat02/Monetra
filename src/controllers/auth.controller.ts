@@ -20,7 +20,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       name,
       email,
       password: hashedPassword,
-      role: "borrower ",
+      role: "borrower",
     });
 
     const token = jwt.sign(
@@ -40,6 +40,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       },
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server Error" });
   }
 };

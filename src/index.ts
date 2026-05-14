@@ -2,6 +2,7 @@ import express from "express";
 import connectDB from "./config/db";
 import cors from "cors";
 import dotenv from "dotenv";
+import authRoutes from "./routes/auth.routes";
 
 dotenv.config();
 
@@ -14,6 +15,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.json({ message: "Monetra API is running" });
 });
+
+app.use("/api/auth", authRoutes);
 
 const start = async () => {
   await connectDB();

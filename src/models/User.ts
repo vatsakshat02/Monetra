@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { Interface } from "readline";
 
 export type userRole =
   | "borrower"
@@ -13,8 +12,8 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: string;
-  pan?: number;
+  role: userRole;
+  pan?: string;
   dateOfBirth?: Date;
   monthlySalary?: number;
   employmentMode?: "salaried" | "self-employed" | "unemployed";
@@ -53,7 +52,7 @@ const userSchema = new Schema<IUser>(
       default: "borrower",
     },
     pan: {
-      type: Number,
+      type: String,
       uppercase: true,
     },
     dateOfBirth: {
