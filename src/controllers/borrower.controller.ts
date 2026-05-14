@@ -1,6 +1,7 @@
 import { NextFunction, Response } from "express";
 import { AuthRequest } from "../middleware/authenticate";
 import User from "../models/User";
+import Loan from "../models/Loan";
 
 const calculateAge = (dateofBirth: Date): number => {
   const today = new Date();
@@ -89,6 +90,31 @@ export const saveProfile = async (
         name: user?.name,
         isProfileComplete: user?.isProfileComplete,
       },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const uploadSalarySlip = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ message: "No file uploaded" });
+      return;
+    }
+    const fileUrl = `/uploads/${req.file.filename}`;
+
+    await Loan.findByIdAndUpdate(
+      { borrowerId: req.user?.id },
+      { salarySlipUrl: fileUrl }
+    );
+
+    res.status(200).json({
+      message: "Salary slip uploaded successfully",
+      fileUrl,
     });
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
