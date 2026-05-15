@@ -120,3 +120,53 @@ export const uploadSalarySlip = async (
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+export const applyLoan = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { amount, tenure } = req.body;
+    const user = await User.findById(req.user?.id);
+    if (!user?.isProfileComplete) {
+      res
+        .status(400)
+        .json({ message: "Complete your profile before applying" });
+      return;
+    }
+    const existingLoan = await Loan.findOne({
+      borrowerId: req.user?.id,
+      status: { $in: ["APPLIED", "SANCTIONED", "DISBURSED"] },
+    });
+    if (existingLoan) {
+      res.status(400).json({ message: "You have an active loan application" });
+      return;
+    }
+    const rate = 12;
+    const si = (amount * rate * tenure) / (365 * 100);
+    const totalRepayment = Math.round(amount + si);
+
+    const loan = await Loan.create({
+      borrowerId: req.user?.id,
+      amount,
+      tenure,
+      interestRate: rate,
+      totalRepayment,
+      status: "APPLIED",
+    });
+
+    res.status(200).json({
+      message: "Loan submitted successfully",
+      loan: {
+        id: loan._id,
+        amount: loan.amount,
+        tenure: loan.tenure,
+        interestRate: loan.interestRate,
+        totalRepayment: loan.totalRepayment,
+        status: loan.status,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
