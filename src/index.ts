@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes";
 import borrowerRoutes from "./routes/borrower.routes";
+import dashboardRoutes from "./routes/dashboard.routes";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/borrower", borrowerRoutes);
+app.use("/api/dashboards", dashboardRoutes);
 
 const start = async () => {
   await connectDB();
