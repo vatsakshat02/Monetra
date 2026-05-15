@@ -135,3 +135,82 @@ export const disbureLoan = async (
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+export const getCollectionData = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const loans = await Loan.find({ status: "SANCTIONED" }).populate(
+      "borrowerId",
+      "-password"
+    );
+    res.status(200).json(loans);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const recordPayment = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { utrNumber, amount, paymentDate } = req.body;
+
+    const loan = await Loan.findById(req.params.id);
+    if (!loan) {
+      res.status(404).json({ message: "Loan not found" });
+      return;
+    }
+    if (loan.status !== "DISBURSED") {
+      res
+        .status(400)
+        .json({ message: "Payment can be recorded for only disbursed loans" });
+      return;
+    }
+
+    const existingPayment = await User.findOne({ utrNumber });
+    if (existingPayment) {
+      res.status(400).json({ mesage: "UTR number already exists" });
+      return;
+    }
+
+    const payments = await Payment.find({ loanId: loan._id });
+    const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
+
+    const remaining = loan.totalRepayment - totalPaid;
+    if (amount > remaining) {
+      res.status(400).json({
+        message: `Amount exceeds outstanding balance, Remaining ${remaining}`,
+      });
+      return;
+    }
+    const payment = await Payment.create({
+      loanId: loan._id,
+      utrNumber,
+      amount,
+      paymentDate,
+      recordedBy: req.user?.id,
+    });
+
+    const newTotalPaid = totalPaid + amount;
+    if (newTotalPaid >= loan.totalRepayment) {
+      loan.status = "CLOSED";
+      await loan.save();
+    }
+
+    res.status(200).json({
+      message:
+        newTotalPaid >= loan.totalRepayment
+          ? "Loan is closed now"
+          : "Payment recorded sucessfully",
+      payment,
+      totalPaid: newTotalPaid,
+      remaining: loan.totalRepayment - newTotalPaid,
+      loanStatus: loan.status,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
