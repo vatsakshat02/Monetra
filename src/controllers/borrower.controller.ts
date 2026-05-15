@@ -182,6 +182,7 @@ export const getMyLoan = async (
 
     if (!loan) {
       res.status(404).json({ message: "No loan found" });
+      return;
     }
 
     res.status(200).json({ loan });
