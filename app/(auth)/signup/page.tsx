@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -16,24 +16,14 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const data = await api.login(form);
+      const data = await api.signup(form);
 
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-
-        // Redirect based on role
-        if (data.user.role === "borrower") {
-          if (!data.user.isProfileComplete) {
-            router.push("/profile");
-          } else {
-            router.push("/status");
-          }
-        } else {
-          router.push("/dashboard");
-        }
+        router.push("/profile");
       } else {
-        setError(data.message || "Login failed");
+        setError(data.message || "Signup failed");
       }
     } catch (err) {
       setError("Something went wrong");
@@ -45,23 +35,33 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white">Monetra</h1>
-          <p className="text-gray-400 mt-2">Sign in to your account</p>
+          <p className="text-gray-400 mt-2">Create your account</p>
         </div>
 
-        {/* Card */}
         <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Error */}
             {error && (
               <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
-            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Full Name
+              </label>
+              <input
+                type="text"
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition"
+                placeholder="Akshat Vats"
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Email
@@ -76,7 +76,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Password
@@ -84,28 +83,26 @@ export default function LoginPage() {
               <input
                 type="password"
                 required
-                value={form.email}
+                value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition"
                 placeholder="••••••••"
               />
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 
-          {/* Signup link */}
           <p className="text-center text-gray-400 text-sm mt-6">
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-blue-400 hover:text-blue-300">
-              Sign up
+            Already have an account?{" "}
+            <Link href="/login" className="text-blue-400 hover:text-blue-300">
+              Sign in
             </Link>
           </p>
         </div>
