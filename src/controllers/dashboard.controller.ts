@@ -93,3 +93,45 @@ export const rejectLoan = async (
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+export const getDisbursementData = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const loans = await Loan.find({ status: "SANCTIONED" }).populate(
+      "borrowerId",
+      "-password"
+    );
+    res.status(200).json({ loans });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const disbureLoan = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const loan = await Loan.findById(req.params.id);
+    if (!loan) {
+      res.status(404).json({ message: "Loan Not found" });
+      return;
+    }
+
+    if (loan.status !== "SANCTIONED") {
+      res
+        .status(400)
+        .json({ message: "Only sanctioned loan can be dispursed" });
+      return;
+    }
+
+    loan.status = "DISBURSED";
+    loan.disbursedBy = req.user?.id as any;
+    await loan.save();
+    res.status(200).json({ message: "Loan disbursed successfully", loan });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
