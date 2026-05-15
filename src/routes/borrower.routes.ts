@@ -1,5 +1,7 @@
 import { Router } from "express";
 import {
+  applyLoan,
+  getMyLoan,
   saveProfile,
   uploadSalarySlip,
 } from "../controllers/borrower.controller";
@@ -17,5 +19,7 @@ router.post(
   upload.single("salarySlip"),
   uploadSalarySlip
 );
+router.post("/apply", authenticate, authorize("borrower"), applyLoan);
+router.post("/loan", authenticate, authorize("borrower"), getMyLoan);
 
 export default router;
