@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/borrower", borrowerRoutes);
-app.use("/api/dashboards", dashboardRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 const start = async () => {
   await connectDB();

@@ -109,12 +109,12 @@ export const getDisbursementData = async (
   }
 };
 
-export const disbureLoan = async (
+export const disburseLoan = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
-    const loan = await Loan.findById(req.params.id);
+    const loan = await Loan.findById(req.params.loanId);
     if (!loan) {
       res.status(404).json({ message: "Loan Not found" });
       return;
@@ -141,11 +141,11 @@ export const getCollectionData = async (
   res: Response
 ): Promise<void> => {
   try {
-    const loans = await Loan.find({ status: "SANCTIONED" }).populate(
+    const loans = await Loan.find({ status: "DISBURSED" }).populate(
       "borrowerId",
       "-password"
     );
-    res.status(200).json(loans);
+    res.status(200).json({ loans });
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
   }
@@ -157,8 +157,10 @@ export const recordPayment = async (
 ): Promise<void> => {
   try {
     const { utrNumber, amount, paymentDate } = req.body;
+    console.log("Payment body:", req.body);
 
-    const loan = await Loan.findById(req.params.id);
+    const loan = await Loan.findById(req.params.loanId);
+    console.log("Found loan:", loan?.status);
     if (!loan) {
       res.status(404).json({ message: "Loan not found" });
       return;
@@ -170,7 +172,7 @@ export const recordPayment = async (
       return;
     }
 
-    const existingPayment = await User.findOne({ utrNumber });
+    const existingPayment = await Payment.findOne({ utrNumber });
     if (existingPayment) {
       res.status(400).json({ mesage: "UTR number already exists" });
       return;
@@ -178,6 +180,9 @@ export const recordPayment = async (
 
     const payments = await Payment.find({ loanId: loan._id });
     const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
+    console.log("Total paid:", totalPaid);
+    console.log("Remaining:", loan.totalRepayment - totalPaid);
+    console.log("Amount being paid:", amount);
 
     const remaining = loan.totalRepayment - totalPaid;
     if (amount > remaining) {

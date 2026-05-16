@@ -6,11 +6,12 @@ import {
   getSanctionedData,
   approveLoan,
   rejectLoan,
-  disbureLoan,
+  disburseLoan,
   recordPayment,
 } from "../controllers/dashboard.controller";
 import authenticate from "../middleware/authenticate";
 import authorize from "../middleware/authorize";
+console.log("Dashboard routes loaded");
 
 const router = Router();
 
@@ -45,7 +46,7 @@ router.patch(
   "/disbursement/:loanId/disburse",
   authenticate,
   authorize("disbursement", "admin"),
-  disbureLoan
+  disburseLoan
 );
 
 router.get(
@@ -57,8 +58,7 @@ router.get(
 router.post(
   "/collection/:loanId/payment",
   authenticate,
-  authorize("collection,admin"),
+  authorize("collection", "admin"),
   recordPayment
 );
-
 export default router;
