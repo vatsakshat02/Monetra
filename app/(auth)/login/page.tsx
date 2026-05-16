@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 
-export default function LoginPage() {
+const Loginpage = () => {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -21,8 +21,6 @@ export default function LoginPage() {
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-
-        // Redirect based on role
         if (data.user.role === "borrower") {
           if (!data.user.isProfileComplete) {
             router.push("/profile");
@@ -33,7 +31,7 @@ export default function LoginPage() {
           router.push("/dashboard");
         }
       } else {
-        setError(data.message || "Login failed");
+        setError("Something went wrong");
       }
     } catch (err) {
       setError("Something went wrong");
@@ -43,73 +41,48 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Monetra</h1>
-          <p className="text-gray-400 mt-2">Sign in to your account</p>
-        </div>
-
-        {/* Card */}
-        <div className="bg-gray-900 rounded-2xl p-8 border border-gray-800">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Error */}
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
-
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition"
-                placeholder="you@example.com"
-              />
+    <div>
+      <div>
+        <h1>Login page</h1>
+        <p>Log in to your account</p>
+      </div>
+      <div>
+        <form onSubmit={handleSubmit}>
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm">
+              {error}
             </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                required
-                value={form.email}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition"
-                placeholder="••••••••"
-              />
-            </div>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition"
-            >
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-
-          {/* Signup link */}
-          <p className="text-center text-gray-400 text-sm mt-6">
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-blue-400 hover:text-blue-300">
-              Sign up
-            </Link>
-          </p>
-        </div>
+          )}
+          <div>
+            <label>Email</label>
+            <input
+              type="email"
+              required
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="Enter your email"
+            />
+          </div>
+          <div>
+            <label>Password</label>
+            <input
+              type="password"
+              required
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              placeholder="Enter your password"
+            />
+          </div>
+          <button type="submit" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+        <p>
+          Dont have an account <Link href="/signup">Sign up</Link>
+        </p>
       </div>
     </div>
   );
-}
+};
+
+export default Loginpage;
