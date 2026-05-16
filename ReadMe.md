@@ -42,21 +42,25 @@ A full-stack Loan Management System built with the MERN stack and Next.js. Borro
 
 ## Project Structure
 
+```
 Monetra/
-├── client/ # Next.js frontend
-│ ├── app/
-│ │ ├── (auth)/ # Login, Signup
-│ │ ├── (borrower)/ # Profile, Upload, Apply, Status
-│ │ └── (dashboard)/ # Operations dashboard
-│ └── lib/
-│ └── api.ts # All API calls
-└── server/ # Express backend
-└── src/
-├── models/ # User, Loan, Payment
-├── routes/ # Auth, Borrower, Dashboard
-├── controllers/ # Business logic
-├── middleware/ # authenticate, authorize
-└── config/ # DB connection, Multer
+├── client/          # Next.js frontend
+│   ├── app/
+│   │   ├── (auth)/        # Login, Signup
+│   │   ├── (borrower)/    # Profile, Upload, Apply, Status
+│   │   └── (dashboard)/   # Operations dashboard
+│   └── lib/
+│       └── api.ts         # All API calls
+└── server/          # Express backend
+    └── src/
+        ├── models/        # User, Loan, Payment
+        ├── routes/        # Auth, Borrower, Dashboard
+        ├── controllers/   # Business logic
+        ├── middleware/     # authenticate, authorize
+        └── config/        # DB connection, Multer
+```
+
+---
 
 ---
 
