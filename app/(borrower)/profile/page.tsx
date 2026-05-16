@@ -34,7 +34,7 @@ const ProfilePage = () => {
         token
       );
 
-      if (data.message === "Profile saved successfully") {
+      if (data.message === "profile saved successfully") {
         router.push("/upload");
       } else {
         setError(data.reason || data.message || "Something went wrong");

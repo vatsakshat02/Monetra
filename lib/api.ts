@@ -62,14 +62,12 @@ export const api = {
     const res = await fetch(`${BASE_URL}/dashboard/${module}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return res.json;
+    return res.json();
   },
   approveLoan: async (loanId: string, token: string) => {
     const res = await fetch(
       `${BASE_URL}/dashboard/sanction/${loanId}/approve`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      { method: "PATCH", headers: { Authorization: `Bearer ${token}` } }
     );
     return res.json();
   },
@@ -84,7 +82,7 @@ export const api = {
     });
     return res.json();
   },
-  disburseLoan: async (loanId: string, data: any, token: string) => {
+  disburseLoan: async (loanId: string, token: string) => {
     const res = await fetch(
       `${BASE_URL}/dashboard/disbursement/${loanId}/disburse`,
       {
