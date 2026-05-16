@@ -107,7 +107,7 @@ export const uploadSalarySlip = async (
     }
     const fileUrl = `/uploads/${req.file.filename}`;
 
-    await Loan.findByIdAndUpdate(
+    await Loan.findOneAndUpdate(
       { borrowerId: req.user?.id },
       { salarySlipUrl: fileUrl }
     );
@@ -117,6 +117,7 @@ export const uploadSalarySlip = async (
       fileUrl,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server Error" });
   }
 };
@@ -176,10 +177,10 @@ export const getMyLoan = async (
   res: Response
 ): Promise<void> => {
   try {
-    const loan = await Loan.findById({ borrowerId: req.user?.id }).sort({
+    const loan = await Loan.findOne({ borrowerId: req.user?.id }).sort({
       createdAt: -1,
     });
-
+    console.log("Found loan:", loan);
     if (!loan) {
       res.status(404).json({ message: "No loan found" });
       return;

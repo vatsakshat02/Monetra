@@ -20,6 +20,6 @@ router.post(
   uploadSalarySlip
 );
 router.post("/apply", authenticate, authorize("borrower"), applyLoan);
-router.post("/loan", authenticate, authorize("borrower"), getMyLoan);
+router.get("/loan", authenticate, authorize("borrower"), getMyLoan);
 
 export default router;
