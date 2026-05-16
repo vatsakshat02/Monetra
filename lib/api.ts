@@ -50,7 +50,7 @@ export const api = {
       },
       body: JSON.stringify(data),
     });
-    return res.json;
+    return res.json();
   },
   getMyLoan: async (token: string) => {
     const res = await fetch(`${BASE_URL}/borrower/loan`, {
