@@ -188,6 +188,7 @@ export const getMyLoan = async (
 
     res.status(200).json({ loan });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
